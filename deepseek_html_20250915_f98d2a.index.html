@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Proposal Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 20px;
+        }
+        .navbar-brand {
+            font-weight: 600;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+        .btn-success {
+            background-color: #198754;
+            border: none;
+        }
+        .table thead th {
+            background-color: #0d6efd;
+            color: white;
+        }
+        #proposalDocument {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .proposal-header {
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .proposal-footer {
+            border-top: 2px solid #0d6efd;
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+        .item-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .item-table th, .item-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+        .item-table th {
+            background-color: #f8f9fa;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #f1f8ff;
+        }
+        .na-item {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        .na-badge {
+            background-color: #6c757d;
+        }
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-control {
+            width: 100px;
+        }
+        .form-check-input {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-file-contract me-2"></i>Proposal Generator
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#" id="navForm">New Proposal</a>
+                <a class="nav-link" href="#" id="navDashboard">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Form Page -->
+        <div class="page active" id="formPage">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0"><i class="fas fa-edit me-2"></i>Proposal Form</h3>
+                </div>
+                <div class="card-body">
+                    <form id="proposalForm">
+                        <div class="mb-3">
+                            <label for="clientName" class="form-label">Client Name</label>
+                            <input type="text" class="form-control" id="clientName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clientEmail" class="form-label">Client Email</label>
+                            <input type="email" class="form-control" id="clientEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="proposalDate" class="form-label">Proposal Date</label>
+                            <input type="date" class="form-control" id="proposalDate" required>
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3">Items</h5>
+                        
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-1">
+                                        <div class="form-check">
+                                            <input class="form-check-input item-toggle" type="checkbox" id="sophosToggle" checked data-item="sophos">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Sophos License</label>
+                                        <p class="text-muted small mb-0">$300 each</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="item-controls">
+                                            <input type="number" class="form-control quantity-control item-qty" data-price="300" id="sophosQty" min="1" value="1">
+                                            <span class="badge bg-success" id="sophosStatus">Active</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Total: $<span id="sophosTotal">300.00</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-1">
+                                        <div class="form-check">
+                                            <input class="form-check-input item-toggle" type="checkbox" id="googleToggle" checked data-item="google">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Google License</label>
+                                        <p class="text-muted small mb-0">$250 each</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="item-controls">
+                                            <input type="number" class="form-control quantity-control item-qty" data-price="250" id="googleQty" min="1" value="1">
+                                            <span class="badge bg-success" id="googleStatus">Active</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Total: $<span id="googleTotal">250.00</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-1">
+                                        <div class="form-check">
+                                            <input class="form-check-input item-toggle" type="checkbox" id="azureToggle" checked data-item="azure">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Azure</label>
+                                        <p class="text-muted small mb-0">$1000 each</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="item-controls">
+                                            <input type="number" class="form-control quantity-control item-qty" data-price="1000" id="azureQty" min="1" value="1">
+                                            <span class="badge bg-success" id="azureStatus">Active</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Total: $<span id="azureTotal">1000.00</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-1">
+                                        <div class="form-check">
+                                            <input class="form-check-input item-toggle" type="checkbox" id="teamsToggle" checked data-item="teams">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Microsoft Teams</label>
+                                        <p class="text-muted small mb-0">$50 each</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="item-controls">
+                                            <input type="number" class="form-control quantity-control item-qty" data-price="50" id="teamsQty" min="1" value="1">
+                                            <span class="badge bg-success" id="teamsStatus">Active</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Total: $<span id="teamsTotal">50.00</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h4>Grand Total: $<span id="grandTotal">1600.00</span></h4>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Proposal
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div class="page" id="dashboardPage">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0"><i class="fas fa-tachometer-alt me-2"></i>Proposal Dashboard</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Client Name</th>
+                                    <th>Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="proposalsTable">
+                                <!-- Table rows will be generated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button id="backToForm" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus me-2"></i>Create New Proposal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proposal Page -->
+        <div class="page" id="proposalPage">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-file-alt me-2"></i>Proposal Document</h2>
+                <div>
+                    <button id="printProposal" class="btn btn-primary me-2">
+                        <i class="fas fa-print me-2"></i>Print
+                    </button>
+                    <button id="backToDashboard" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </button>
+                </div>
+            </div>
+            
+            <div id="proposalDocument">
+                <div class="proposal-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h1>PROFESSIONAL PROPOSAL</h1>
+                            <p>Prepared for: <span id="propClientName"></span></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p><strong>Date:</strong> <span id="propDate"></span></p>
+                            <p><strong>Proposal ID:</strong> <span id="propId"></span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="proposal-body">
+                    <h3 class="mt-4">Introduction</h3>
+                    <p>We are pleased to submit this proposal for your consideration. This document outlines the products and services we recommend to meet your requirements, along with associated costs.</p>
+                    
+                    <h3 class="mt-4">Proposed Solutions</h3>
+                    <p>After careful analysis of your needs, we propose the following solutions:</p>
+                    
+                    <table class="item-table">
+                        <thead>
+                            <tr>
+                                <th>Item Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="proposalItems">
+                            <!-- Items will be populated here -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="3" class="text-end"><strong>Grand Total:</strong></td>
+                                <td>$<span id="proposalTotal"></span></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <h3 class="mt-4">Terms and Conditions</h3>
+                    <p>This proposal is valid for 30 days from the date of issue. Payment terms are net 15 upon invoice receipt. All services are subject to our standard terms and conditions.</p>
+                    
+                    <p>Implementation will begin upon receipt of signed agreement and purchase order. We estimate project completion within 2-4 weeks from kickoff.</p>
+                    
+                    <h3 class="mt-4">Conclusion</h3>
+                    <p>We are confident that our proposed solutions will meet your requirements and expectations. We look forward to the opportunity to work with you.</p>
+                    
+                    <p>Sincerely,<br>
+                    The Team at Tech Solutions Inc.</p>
+                </div>
+                
+                <div class="proposal-footer">
+                    <p>Tech Solutions Inc. | 123 Business Blvd, Suite 100 | Anytown, ST 12345</p>
+                    <p>Phone: (555) 123-4567 | Email: info@techsolutions.com | Web: www.techsolutions.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage for proposals
+        let proposals = JSON.parse(localStorage.getItem('proposals')) || [];
+        let currentProposalId = null;
+
+        // DOM elements
+        const formPage = document.getElementById('formPage');
+        const dashboardPage = document.getElementById('dashboardPage');
+        const proposalPage = document.getElementById('proposalPage');
+        const proposalsTable = document.getElementById('proposalsTable');
+        const proposalForm = document.getElementById('proposalForm');
+        const navForm = document.getElementById('navForm');
+        const navDashboard = document.getElementById('navDashboard');
+        const backToForm = document.getElementById('backToForm');
+        const backToDashboard = document.getElementById('backToDashboard');
+        const printProposal = document.getElementById('printProposal');
+
+        // Show a specific page and hide others
+        function showPage(page) {
+            formPage.classList.remove('active');
+            dashboardPage.classList.remove('active');
+            proposalPage.classList.remove('active');
+            
+            page.classList.add('active');
+        }
+
+        // Toggle item applicability
+        function toggleItem(item) {
+            const toggle = document.getElementById(`${item}Toggle`);
+            const qty = document.getElementById(`${item}Qty`);
+            const status = document.getElementById(`${item}Status`);
+            const total = document.getElementById(`${item}Total`);
+            
+            if (toggle.checked) {
+                qty.disabled = false;
+                status.textContent = 'Active';
+                status.className = 'badge bg-success';
+            } else {
+                qty.disabled = true;
+                status.textContent = 'Non Applicable';
+                status.className = 'badge bg-secondary na-badge';
+                total.textContent = '0.00';
+            }
+            
+            calculateTotals();
+        }
+
+        // Calculate item totals and grand total
+        function calculateTotals() {
+            const itemInputs = document.querySelectorAll('.item-qty');
+            let grandTotal = 0;
+            
+            itemInputs.forEach(input => {
+                const toggle = document.getElementById(`${input.id.replace('Qty', 'Toggle')}`);
+                
+                if (toggle.checked) {
+                    const qty = parseInt(input.value) || 0;
+                    const price = parseFloat(input.getAttribute('data-price'));
+                    const total = qty * price;
+                    
+                    document.getElementById(`${input.id.replace('Qty', 'Total')}`).textContent = total.toFixed(2);
+                    grandTotal += total;
+                }
+            });
+            
+            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+        }
+
+        // Generate a unique ID for proposals
+        function generateId() {
+            return 'prop_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+        }
+
+        // Save proposal to storage
+        function saveProposal(proposal) {
+            proposals.push(proposal);
+            localStorage.setItem('proposals', JSON.stringify(proposals));
+        }
+
+        // Render the proposals table
+        function renderProposalsTable() {
+            proposalsTable.innerHTML = '';
+            
+            if (proposals.length === 0) {
+                proposalsTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">No proposals found. Create your first proposal!</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            proposals.forEach(proposal => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${proposal.id.substring(0, 8)}</td>
+                    <td>${proposal.clientName}</td>
+                    <td>${proposal.date}</td>
+                    <td>$${proposal.total.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success view-proposal" data-id="${proposal.id}">
+                            <i class="fas fa-file-alt me-1"></i>Create Proposal
+                        </button>
+                    </td>
+                `;
+                proposalsTable.appendChild(row);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-proposal').forEach(button => {
+                button.addEventListener('click', function() {
+                    const proposalId = this.getAttribute('data-id');
+                    showProposal(proposalId);
+                });
+            });
+        }
+
+        // Show proposal document
+        function showProposal(proposalId) {
+            const proposal = proposals.find(p => p.id === proposalId);
+            if (!proposal) return;
+            
+            currentProposalId = proposalId;
+            
+            // Populate proposal document
+            document.getElementById('propClientName').textContent = proposal.clientName;
+            document.getElementById('propDate').textContent = proposal.date;
+            document.getElementById('propId').textContent = proposalId.substring(0, 8);
+            document.getElementById('proposalTotal').textContent = proposal.total.toFixed(2);
+            
+            // Populate items table
+            const itemsTable = document.getElementById('proposalItems');
+            itemsTable.innerHTML = '';
+            
+            proposal.items.forEach(item => {
+                const row = document.createElement('tr');
+                
+                if (item.applicable) {
+                    row.innerHTML = `
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>$${(item.quantity * item.price).toFixed(2)}</td>
+                    `;
+                } else {
+                    row.className = 'na-item';
+                    row.innerHTML = `
+                        <td>${item.name}</td>
+                        <td colspan="3" class="text-center">
+                            <span class="badge bg-secondary">Non Applicable</span>
+                        </td>
+                    `;
+                }
+                
+                itemsTable.appendChild(row);
+            });
+            
+            showPage(proposalPage);
+        }
+
+        // Event Listeners
+        document.querySelectorAll('.item-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const item = this.getAttribute('data-item');
+                toggleItem(item);
+            });
+        });
+
+        document.querySelectorAll('.item-qty').forEach(input => {
+            input.addEventListener('input', calculateTotals);
+        });
+
+        proposalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const clientName = document.getElementById('clientName').value;
+            const clientEmail = document.getElementById('clientEmail').value;
+            const proposalDate = document.getElementById('proposalDate').value;
+            
+            const items = [
+                {
+                    name: 'Sophos License',
+                    quantity: parseInt(document.getElementById('sophosQty').value) || 0,
+                    price: 300,
+                    applicable: document.getElementById('sophosToggle').checked
+                },
+                {
+                    name: 'Google License',
+                    quantity: parseInt(document.getElementById('googleQty').value) || 0,
+                    price: 250,
+                    applicable: document.getElementById('googleToggle').checked
+                },
+                {
+                    name: 'Azure',
+                    quantity: parseInt(document.getElementById('azureQty').value) || 0,
+                    price: 1000,
+                    applicable: document.getElementById('azureToggle').checked
+                },
+                {
+                    name: 'Microsoft Teams',
+                    quantity: parseInt(document.getElementById('teamsQty').value) || 0,
+                    price: 50,
+                    applicable: document.getElementById('teamsToggle').checked
+                }
+            ];
+            
+            const total = items.reduce((sum, item) => {
+                return item.applicable ? sum + (item.quantity * item.price) : sum;
+            }, 0);
+            
+            const proposal = {
+                id: generateId(),
+                clientName,
+                clientEmail,
+                date: proposalDate,
+                items,
+                total
+            };
+            
+            saveProposal(proposal);
+            renderProposalsTable();
+            showPage(dashboardPage);
+            
+            // Reset form
+            proposalForm.reset();
+            
+            // Reset toggles
+            document.querySelectorAll('.item-toggle').forEach(toggle => {
+                toggle.checked = true;
+            });
+            
+            // Reset quantities
+            document.getElementById('sophosQty').value = 1;
+            document.getElementById('googleQty').value = 1;
+            document.getElementById('azureQty').value = 1;
+            document.getElementById('teamsQty').value = 1;
+            
+            // Enable all inputs
+            document.querySelectorAll('.item-qty').forEach(input => {
+                input.disabled = false;
+            });
+            
+            // Reset status badges
+            document.querySelectorAll('[id$="Status"]').forEach(badge => {
+                badge.textContent = 'Active';
+                badge.className = 'badge bg-success';
+            });
+            
+            calculateTotals();
+        });
+
+        navForm.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPage(formPage);
+        });
+
+        navDashboard.addEventListener('click', function(e) {
+            e.preventDefault();
+            renderProposalsTable();
+            showPage(dashboardPage);
+        });
+
+        backToForm.addEventListener('click', function() {
+            showPage(formPage);
+        });
+
+        backToDashboard.addEventListener('click', function() {
+            showPage(dashboardPage);
+        });
+
+        printProposal.addEventListener('click', function() {
+            window.print();
+        });
+
+        // Initialize the app
+        calculateTotals();
+        renderProposalsTable();
+    </script>
+</body>
+</html>
